@@ -36,4 +36,4 @@ http://localhost/DigitalLibrary
 
 ## Author
 
-Jay Jagtap
+Om Jagtap
