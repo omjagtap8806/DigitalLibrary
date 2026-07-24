@@ -21,6 +21,12 @@ include("../includes/config.php");
 // ==============================
 
 $search = "";
+$category = "";
+
+if(isset($_GET['category']))
+{
+    $category = $_GET['category'];
+}
 
 if (isset($_GET['search'])) {
     $search = trim($_GET['search']);
@@ -44,26 +50,54 @@ $offset = ($page - 1) * $limit;
 // Count Total Records
 // ==============================
 
-$countSQL = "SELECT COUNT(*) AS total
-             FROM books
-             WHERE
-             title LIKE ?
-             OR author LIKE ?
-             OR category LIKE ?
-             OR isbn LIKE ?";
+if($category != "")
+{
+    $countSQL = "SELECT COUNT(*) AS total
+                 FROM books
+                 WHERE category=? AND
+                 (
+                    title LIKE ?
+                    OR author LIKE ?
+                    OR isbn LIKE ?
+                 )";
+}
+else
+{
+    $countSQL = "SELECT COUNT(*) AS total
+                 FROM books
+                 WHERE
+                 title LIKE ?
+                 OR author LIKE ?
+                 OR category LIKE ?
+                 OR isbn LIKE ?";
+}
 
 $stmt = mysqli_prepare($conn, $countSQL);
 
 $keyword = "%".$search."%";
 
-mysqli_stmt_bind_param(
-    $stmt,
-    "ssss",
-    $keyword,
-    $keyword,
-    $keyword,
-    $keyword
-);
+if($category != "")
+{
+    mysqli_stmt_bind_param(
+        $stmt,
+        "ssss",
+        $category,
+        $keyword,
+        $keyword,
+        $keyword
+    );
+}
+else
+{
+    mysqli_stmt_bind_param(
+        $stmt,
+        "ssss",
+        $keyword,
+        $keyword,
+        $keyword,
+        $keyword
+    );
+}
 
 mysqli_stmt_execute($stmt);
 
@@ -79,32 +113,61 @@ $totalPages = ceil($totalBooks / $limit);
 // Get Books
 // ==============================
 
-$sql = "SELECT *
-        FROM books
-        WHERE
-        title LIKE ?
-        OR author LIKE ?
-        OR category LIKE ?
-        OR isbn LIKE ?
-        ORDER BY id DESC
-        LIMIT ?, ?";
+if($category != "")
+{
+    $sql = "SELECT *
+            FROM books
+            WHERE category=?
+            AND
+            (
+                title LIKE ?
+                OR author LIKE ?
+                OR isbn LIKE ?
+            )
+            ORDER BY id DESC
+            LIMIT ?, ?";
+}
+else
+{
+    $sql = "SELECT *
+            FROM books
+            WHERE
+            title LIKE ?
+            OR author LIKE ?
+            OR category LIKE ?
+            OR isbn LIKE ?
+            ORDER BY id DESC
+            LIMIT ?, ?";
+}
 
 $stmt = mysqli_prepare($conn, $sql);
 
-mysqli_stmt_bind_param(
-
-    $stmt,
-
-    "ssssii",
-
-    $keyword,
-    $keyword,
-    $keyword,
-    $keyword,
-    $offset,
-    $limit
-
-);
+if($category != "")
+{
+    mysqli_stmt_bind_param(
+        $stmt,
+        "ssssii",
+        $category,
+        $keyword,
+        $keyword,
+        $keyword,
+        $offset,
+        $limit
+    );
+}
+else
+{
+    mysqli_stmt_bind_param(
+        $stmt,
+        "ssssii",
+        $keyword,
+        $keyword,
+        $keyword,
+        $keyword,
+        $offset,
+        $limit
+    );
+}
 
 mysqli_stmt_execute($stmt);
 
@@ -168,24 +231,57 @@ Add New Book
 
 <form method="GET" class="mb-4">
 
-<div class="input-group">
+<div class="row g-2">
 
-<input
-type="text"
-name="search"
-class="form-control"
-placeholder="Search by Title, Author, Category or ISBN..."
-value="<?php echo htmlspecialchars($search); ?>">
+    <div class="col-md-4">
 
-<button
-class="btn btn-success"
-type="submit">
+        <select name="category" class="form-select">
 
-<i class="fas fa-search"></i>
+            <option value="">All Categories</option>
 
-Search
+            <?php
 
-</button>
+            $catQuery = mysqli_query($conn, "SELECT * FROM categories ORDER BY category_name");
+
+            while($cat = mysqli_fetch_assoc($catQuery))
+            {
+            ?>
+
+            <option value="<?php echo $cat['category_name']; ?>"
+            <?php if($category == $cat['category_name']) echo "selected"; ?>>
+
+                <?php echo $cat['category_name']; ?>
+
+            </option>
+
+            <?php } ?>
+
+        </select>
+
+    </div>
+
+    <div class="col-md-6">
+
+        <input
+        type="text"
+        name="search"
+        class="form-control"
+        placeholder="Search Book..."
+        value="<?php echo htmlspecialchars($search); ?>">
+
+    </div>
+
+    <div class="col-md-2">
+
+        <button class="btn btn-success w-100" type="submit">
+
+            <i class="fas fa-search"></i>
+
+            Search
+
+        </button>
+
+    </div>
 
 </div>
 

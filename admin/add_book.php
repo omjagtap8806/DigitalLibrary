@@ -337,21 +337,21 @@ required>
 
 <option value="">Select Category</option>
 
-<option>Programming</option>
+<?php
 
-<option>Database</option>
+$category_query = mysqli_query($conn, "SELECT * FROM categories ORDER BY category_name ASC");
 
-<option>Networking</option>
+while($category = mysqli_fetch_assoc($category_query))
+{
+?>
 
-<option>Artificial Intelligence</option>
+<option value="<?php echo $category['category_name']; ?>">
+    <?php echo $category['category_name']; ?>
+</option>
 
-<option>Machine Learning</option>
-
-<option>Cyber Security</option>
-
-<option>Operating System</option>
-
-<option>Web Development</option>
+<?php
+}
+?>
 
 </select>
 

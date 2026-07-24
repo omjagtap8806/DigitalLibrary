@@ -280,7 +280,7 @@ transform:translateY(-6px);
         </li>
 
         <li>
-            <a href="reports.php">
+            <a href="report.php">
                 <i class="fas fa-chart-bar"></i> Reports
             </a>
         </li>
@@ -692,7 +692,7 @@ transform:translateY(-6px);
 
                     </a>
 
-                    <a href="reports.php" class="btn btn-dark">
+                    <a href="report.php" class="btn btn-dark">
 
                         <i class="fas fa-chart-line"></i>
 
