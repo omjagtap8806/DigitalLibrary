@@ -116,11 +116,37 @@ if(isset($_POST['add_category']))
 
 $search = isset($_GET['search']) ? $_GET['search'] : '';
 
+$limit = 5;
+
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+
+if($page < 1)
+{
+    $page = 1;
+}
+
+$offset = ($page - 1) * $limit;
+
+$totalQuery = mysqli_query(
+    $conn,
+    "SELECT COUNT(*) AS total
+     FROM categories
+     WHERE category_name LIKE '%$search%'"
+);
+
+$totalRow = mysqli_fetch_assoc($totalQuery);
+
+$totalRecords = $totalRow['total'];
+
+$totalPages = ceil($totalRecords / $limit);
+
 $query = mysqli_query(
     $conn,
-    "SELECT * FROM categories
+    "SELECT *
+     FROM categories
      WHERE category_name LIKE '%$search%'
-     ORDER BY category_name"
+     ORDER BY category_name
+     LIMIT $offset, $limit"
 );
 
 while($row = mysqli_fetch_assoc($query))
@@ -192,6 +218,67 @@ echo $total['total'];
                 </tbody>
 
             </table>
+            <nav class="mt-3">
+
+<ul class="pagination justify-content-center">
+
+<?php if($page > 1) { ?>
+
+<li class="page-item">
+
+<a class="page-link"
+href="?search=<?php echo urlencode($search); ?>&page=<?php echo $page-1; ?>">
+
+Previous
+
+</a>
+
+</li>
+
+<?php } ?>
+
+<?php
+
+for($i = 1; $i <= $totalPages; $i++)
+{
+
+?>
+
+<li class="page-item <?php if($i == $page) echo 'active'; ?>">
+
+<a class="page-link"
+href="?search=<?php echo urlencode($search); ?>&page=<?php echo $i; ?>">
+
+<?php echo $i; ?>
+
+</a>
+
+</li>
+
+<?php
+
+}
+
+?>
+
+<?php if($page < $totalPages) { ?>
+
+<li class="page-item">
+
+<a class="page-link"
+href="?search=<?php echo urlencode($search); ?>&page=<?php echo $page+1; ?>">
+
+Next
+
+</a>
+
+</li>
+
+<?php } ?>
+
+</ul>
+
+</nav>
 
         </div>
 

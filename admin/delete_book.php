@@ -75,23 +75,3 @@ if (mysqli_stmt_execute($stmt)) {
 }
 
 ?>
-<td>
-
-<a href="edit_book.php?id=<?php echo $book['id']; ?>"
-class="btn btn-warning btn-sm">
-
-<i class="fas fa-edit"></i>
-Edit
-
-</a>
-
-<a href="delete_book.php?id=<?php echo $book['id']; ?>"
-class="btn btn-danger btn-sm"
-onclick="return confirm('Are you sure you want to delete this book?');">
-
-<i class="fas fa-trash"></i>
-Delete
-
-</a>
-
-</td>

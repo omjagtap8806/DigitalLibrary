@@ -33,4 +33,4 @@ echo "<script>
         alert('Category deleted successfully.');
         window.location='categories.php';
       </script>";
-?>
+?>.3

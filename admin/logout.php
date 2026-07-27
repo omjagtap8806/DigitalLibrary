@@ -1,8 +1,11 @@
-<a href="logout.php"
-   class="btn btn-danger"
-   onclick="return confirm('Are you sure you want to logout?');">
+<?php
+session_start();
 
-    <i class="fas fa-sign-out-alt"></i>
-    Logout
+// Destroy all session data
+session_unset();
+session_destroy();
 
-</a>
+// Redirect to login page
+header("Location: login.php");
+exit();
+?>

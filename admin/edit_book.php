@@ -315,21 +315,35 @@ name="category"
 class="form-select"
 required>
 
-<option <?php if($book['category']=="Programming") echo "selected"; ?>>Programming</option>
+<?php
 
-<option <?php if($book['category']=="Database") echo "selected"; ?>>Database</option>
+$catQuery = mysqli_query(
+    $conn,
+    "SELECT * FROM categories ORDER BY category_name"
+);
 
-<option <?php if($book['category']=="Networking") echo "selected"; ?>>Networking</option>
+while($cat = mysqli_fetch_assoc($catQuery))
+{
 
-<option <?php if($book['category']=="Artificial Intelligence") echo "selected"; ?>>Artificial Intelligence</option>
+?>
 
-<option <?php if($book['category']=="Machine Learning") echo "selected"; ?>>Machine Learning</option>
+<option
+value="<?php echo $cat['category_name']; ?>"
 
-<option <?php if($book['category']=="Cyber Security") echo "selected"; ?>>Cyber Security</option>
+<?php
+if($book['category'] == $cat['category_name'])
+echo "selected";
+?>
 
-<option <?php if($book['category']=="Operating System") echo "selected"; ?>>Operating System</option>
+>
 
-<option <?php if($book['category']=="Web Development") echo "selected"; ?>>Web Development</option>
+<?php echo $cat['category_name']; ?>
+
+</option>
+
+<?php
+}
+?>
 
 </select>
 
