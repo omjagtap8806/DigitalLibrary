@@ -1,10 +1,10 @@
 <?php
 
 // Database Configuration
-$host = "localhost";
-$user = "root";
-$pass = "";
-$dbname = "library";
+$host = "sql103.infinityfree.com";
+$user = "if0_43040239";
+$pass = "Omjagtap8806";
+$dbname = "if0_43040239_library";
 
 // Create Connection
 $conn = mysqli_connect($host, $user, $pass, $dbname);
