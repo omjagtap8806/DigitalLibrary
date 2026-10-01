@@ -1,20 +1,41 @@
 <?php
 
-// Database Configuration
-$host = "sql103.infinityfree.com";
-$user = "if0_43040239";
-$pass = "Omjagtap8806";
-$dbname = "if0_43040239_library";
+$host = getenv('DB_HOST') ?: '';
+$user = getenv('DB_USER') ?: '';
+$pass = getenv('DB_PASS') ?: '';
+$dbname = getenv('DB_NAME') ?: 'library';
+$port = (int)(getenv('DB_PORT') ?: 4000);
 
-// Create Connection
-$conn = mysqli_connect($host, $user, $pass, $dbname);
+$caFile = __DIR__ . '/../config/isrgrootx1.pem';
 
-// Check Connection
-if (!$conn) {
-    die("Database Connection Failed: " . mysqli_connect_error());
+if (!file_exists($caFile)) {
+    die('TiDB CA certificate not found.');
 }
 
-// Set Character Encoding
-mysqli_set_charset($conn, "utf8");
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+$conn = mysqli_init();
+
+mysqli_ssl_set(
+    $conn,
+    null,
+    null,
+    $caFile,
+    null,
+    null
+);
+
+mysqli_real_connect(
+    $conn,
+    $host,
+    $user,
+    $pass,
+    $dbname,
+    $port,
+    null,
+    MYSQLI_CLIENT_SSL
+);
+
+mysqli_set_charset($conn, 'utf8mb4');
 
 ?>
