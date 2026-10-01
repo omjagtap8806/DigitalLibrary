@@ -24,7 +24,6 @@ $password = md5(trim($_POST['password']));
             AND status='Active'";
 
     $result = mysqli_query($conn, $sql);
-    echo "SQL Query:<br>";
 
 
     if(mysqli_num_rows($result) == 1)
