@@ -1,40 +1,33 @@
 <?php
+
 declare(strict_types=1);
 
 $root = dirname(__DIR__);
 
-$requestedPath = $_GET['path'] ?? '/index.php';
+$path = $_GET['path'] ?? '/index.php';
 unset($_GET['path']);
 
-$requestedPath = rawurldecode((string)$requestedPath);
-$requestedPath = parse_url($requestedPath, PHP_URL_PATH) ?: '/index.php';
+$path = parse_url($path, PHP_URL_PATH) ?: '/index.php';
+$path = '/' . ltrim($path, '/');
 
-if ($requestedPath === '/' || $requestedPath === '') {
-    $requestedPath = '/index.php';
+if ($path === '/') {
+    $path = '/index.php';
 }
 
-$requestedPath = '/' . ltrim($requestedPath, '/');
-
-$target = realpath($root . $requestedPath);
-$rootReal = realpath($root);
+$file = realpath($root . $path);
+$rootPath = realpath($root);
 
 if (
-    $target === false ||
-    $rootReal === false ||
-    !is_file($target) ||
-    strtolower(pathinfo($target, PATHINFO_EXTENSION)) !== 'php' ||
-    strncmp($target, $rootReal . DIRECTORY_SEPARATOR, strlen($rootReal . DIRECTORY_SEPARATOR)) !== 0 ||
-    str_contains($target, DIRECTORY_SEPARATOR . '.git' . DIRECTORY_SEPARATOR)
+    $file === false ||
+    $rootPath === false ||
+    !is_file($file) ||
+    strncmp($file, $rootPath . DIRECTORY_SEPARATOR, strlen($rootPath . DIRECTORY_SEPARATOR)) !== 0
 ) {
     http_response_code(404);
     echo 'Page not found.';
     exit;
 }
 
-chdir(dirname($target));
+chdir(dirname($file));
 
-$_SERVER['SCRIPT_FILENAME'] = $target;
-$_SERVER['SCRIPT_NAME'] = $requestedPath;
-$_SERVER['PHP_SELF'] = $requestedPath;
-
-require $target;
+require $file;
